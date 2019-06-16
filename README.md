@@ -5,21 +5,32 @@ This git repo contains some useful material to be used in NEO workshops.
 Index:
 
 1. [Wallets: Linus and Margaret](#wallets-linus-and-margaret)
-2. [JSON-RPC Examples](#json-rpc-examples)
+2. [Global Assets](#global-assets)
+3. [JSON-RPC Examples](#json-rpc-examples)
 
 ## Wallets: Linus and Margaret
 
 ### Linus
 
 Public Key: `031a6c6fbbdf02ca351745fa86b9ba5a9452d785ac4f7fc2b7548ca2a46c4fcf4a`
+
 Private Key: `1dd37fba80fec4e6a6f13fd708d8dcb3b29def768017052f6c930fa1c5d90bbb`
+
 Address: `AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y`
 
 ### Margaret
 
 Public Key: `0265bf906bf385fbf3f777832e55a87991bcfbe19b097fb7c5ca2e4025a4d5e5d6`
+
 Private Key: `9117f4bf9be717c9a90994326897f4243503accd06712162267e77f18b49c3a3`
+
 Address: `AKYdmtzCD6DtGx16KHzSTKY8ji29sMTbEZ`
+
+## Global Assets
+
+NEO: `c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b`
+
+GAS: `602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7`
 
 ## JSON-RPC Examples
 
@@ -51,7 +62,36 @@ curl -X POST \
   "params":[2007, 1],
   "id": 1
 }'
+```
 
+### Get New Address
+
+```
+curl -X POST \
+  http://127.0.0.1:30333/ \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '{
+  "jsonrpc": "2.0",
+  "method": "getnewaddress",
+  "params":[],
+  "id": 1
+}'
+```
+
+### Send assets to address
+
+```
+curl -X POST \
+  http://127.0.0.1:30333/ \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '{
+  "jsonrpc": "2.0",
+  "method": "sendtoaddress",
+  "params":["c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b", "ARanVBAy27qR9NPmxJfwEw16fzqXEDV9em", "10.0"],
+  "id": 1
+}'
 ```
 
 ### Send Raw Transaction
