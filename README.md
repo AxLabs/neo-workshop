@@ -2,6 +2,11 @@
 
 This git repo contains some useful material to be used in NEO workshops.
 
+Index:
+
+1. [Wallets: Linus and Margaret](#wallets-linus-and-margaret)
+2. [JSON-RPC Examples](#json-rpc-examples)
+
 ## Wallets: Linus and Margaret
 
 ### Linus
