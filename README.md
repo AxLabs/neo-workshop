@@ -8,6 +8,35 @@ Index:
 2. [Global Assets](#global-assets)
 3. [JSON-RPC Examples](#json-rpc-examples)
 
+## Requirements
+
+1. Reasonable internet connectivity. ;-)
+
+2. You need to install Docker.
+  - Windows: [this](https://docs.docker.com/docker-for-windows/install/) and [this](https://runnable.com/docker/install-docker-on-windows-10) links can help you install it and solve pitfalls.
+  - MacOS: it's pretty easy, [this](https://docs.docker.com/docker-for-mac/install/) link is all you need.
+  - Linux: also pretty easy, [this](https://docs.docker.com/install/linux/docker-ce/ubuntu/) link is all you need.
+
+3. You need to install `curl`, or use a docker container that has curl installed. If you don't want to locally install `curl`, you can get a bash with curl using the following command: `docker run -it --name test-curl --network="host" maiwj/curl`.
+
+## Set-up a NEO Private Net
+
+```
+$ git clone git@github.com:AxLabs/neo-privatenet-openwallet-docker.git
+$ cd neo-privatenet-openwallet-docker
+$ docker-compose up
+```
+
+Once you executed the `docker-compose` command, just leave the terminal window opened. It's useful if you want to see some logs or other bits and bytes. If you want to run in a "detached" mode, you can run the `docker-compose` with the `-d` flag, like `docker-compose up -d`.
+
+If you want to start from scratch (deleting all the data of docker containers), just run the following command in the same direcotry:
+
+```
+$ docker-compose down
+```
+
+Then you can start everything again with the `docker-compose up` command.
+
 ## Wallets: Linus and Margaret
 
 ### Linus
