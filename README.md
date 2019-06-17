@@ -4,11 +4,17 @@ This git repo contains some useful material to be used in NEO workshops.
 
 Index:
 
-1. [Wallets: Linus and Margaret](#wallets-linus-and-margaret)
-2. [Global Assets](#global-assets)
-3. [JSON-RPC Examples](#json-rpc-examples)
+* [Wallets and JSON-RPC](#wallets-and-json-rpc)
+  * [Requirements](#requirements)
+  * [Set-up a NEO Private Net](#set-up-a-neo-private-net)
+  * [Linus and Margaret](#linus-and-margaret)
+  * [Global Assets](#global-assets)
+  * [JSON-RPC Examples](#json-rpc-examples)
+* [Smart Contracts](#smart-contracts)
 
-## Requirements
+## Wallets and JSON-RPC
+
+### Requirements
 
 1. Reasonable internet connectivity. ;-)
 
@@ -19,7 +25,7 @@ Index:
 
 3. You need to install `curl`, or use a docker container that has curl installed. If you don't want to locally install `curl`, you can get a bash with curl using the following command: `docker run -it --name test-curl --network="host" maiwj/curl`.
 
-## Set-up a NEO Private Net
+### Set-up a NEO Private Net
 
 ```
 $ git clone git@github.com:AxLabs/neo-privatenet-openwallet-docker.git
@@ -29,7 +35,7 @@ $ docker-compose up
 
 Once you executed the `docker-compose` command, just leave the terminal window opened. It's useful if you want to see some logs or other bits and bytes. If you want to run in a "detached" mode, you can run the `docker-compose` with the `-d` flag, like `docker-compose up -d`.
 
-If you want to start from scratch (deleting all the data of docker containers), just run the following command in the same direcotry:
+If you want to start from scratch (deleting all the data of docker containers), just run the following command in the same directory:
 
 ```
 $ docker-compose down
@@ -37,9 +43,9 @@ $ docker-compose down
 
 Then you can start everything again with the `docker-compose up` command.
 
-## Wallets: Linus and Margaret
+### Linus and Margaret
 
-### Linus
+#### Linus
 
 Public Key: `031a6c6fbbdf02ca351745fa86b9ba5a9452d785ac4f7fc2b7548ca2a46c4fcf4a`
 
@@ -47,7 +53,7 @@ Private Key: `1dd37fba80fec4e6a6f13fd708d8dcb3b29def768017052f6c930fa1c5d90bbb`
 
 Address: `AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y`
 
-### Margaret
+#### Margaret
 
 Public Key: `0265bf906bf385fbf3f777832e55a87991bcfbe19b097fb7c5ca2e4025a4d5e5d6`
 
@@ -55,15 +61,15 @@ Private Key: `9117f4bf9be717c9a90994326897f4243503accd06712162267e77f18b49c3a3`
 
 Address: `AKYdmtzCD6DtGx16KHzSTKY8ji29sMTbEZ`
 
-## Global Assets
+### Global Assets
 
 NEO: `c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b`
 
 GAS: `602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7`
 
-## JSON-RPC Examples
+### JSON-RPC Examples
 
-### Get Account State
+#### Get Account State
 
 ```
 curl -X POST \
@@ -78,7 +84,7 @@ curl -X POST \
 }'
 ```
 
-### Get Block Info
+#### Get Block Info
 
 ```
 curl -X POST \
@@ -93,7 +99,7 @@ curl -X POST \
 }'
 ```
 
-### Get New Address
+#### Get New Address
 
 ```
 curl -X POST \
@@ -108,7 +114,7 @@ curl -X POST \
 }'
 ```
 
-### Send assets to address
+#### Send assets to address
 
 ```
 curl -X POST \
@@ -123,7 +129,7 @@ curl -X POST \
 }'
 ```
 
-### Send Raw Transaction
+#### Send Raw Transaction
 
 ```
 curl -X POST \
@@ -138,3 +144,6 @@ curl -X POST \
 }'
 ```
 
+## Smart Contracts
+
+TBD.
