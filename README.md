@@ -4,13 +4,20 @@ This git repo contains some useful material to be used in NEO workshops.
 
 Index:
 
+* [Requirements](#requirements)
+* [Set-up a NEO Private Net](#set-up-a-neo-private-net)
 * [Wallets and JSON-RPC](#wallets-and-json-rpc)
-  * [Requirements](#requirements)
-  * [Set-up a NEO Private Net](#set-up-a-neo-private-net)
   * [Linus and Margaret](#linus-and-margaret)
   * [Global Assets](#global-assets)
   * [JSON-RPC Examples](#json-rpc-examples)
 * [Smart Contracts](#smart-contracts)
+  * [Context](#context)
+  * [Clone this Git Repository](#clone-this-git-repository)
+  * [Setting two NEO Node CLIs](#setting-two-neo-node-clis)
+  * [Compile](#compile)
+  * [Deploy](#deploy)
+  * [Invoke](#invoke)
+  * [Testing different Scenarios](#testing-different-scenarios)
 
 ## Wallets and JSON-RPC
 
@@ -146,4 +153,222 @@ curl -X POST \
 
 ## Smart Contracts
 
-TBD.
+The first step is to have the private net up and running, as described [here](#set-up-a-neo-private-net).
+
+Once you executed the `docker-compose up -d` command, the following output should look something like this:
+
+```
+$ docker-compose up -d
+Creating network "neo-privatenet-openwallet-docker_default" with the default driver
+Creating neo-privatenet-openwallet-docker_neo-privnet_1 ... done
+Creating neo-privatenet-openwallet-docker_postgresql_1  ... done
+Creating neo-privatenet-openwallet-docker_neo-scan-openwallet_1 ... done
+```
+
+The name of the docker container running all the nodes is `neo-privatenet-openwallet-docker_neo-privnet_1`.
+
+### Context
+
+For demonstration and test purposes, we should spawn two NEO CLI (Command Line Interface) in the same docker container. Each NEO node CLI will be pointing to the same NEO privatenet network -- that was previously created in the `docker-compose` command.
+
+It's advisable that you start the NEO Node CLIs in two different terminals.
+
+### Clone this Git Repository
+
+We will need the `neo-ans.py` contract.
+
+```
+$ git clone https://github.com/AxLabs/neo-workshop.git
+$ cd neo-workshop
+```
+
+The `neo-ans.py` is under the. `contracts` directory.
+
+### Setting two NEO Node CLIs
+
+#### NEO Node - CLI 1
+
+Open a new terminal window and execute:
+
+```
+$ docker exec -it neo-privatenet-openwallet-docker_neo-privnet_1 np-prompt -c /neo-python/neo/data/protocol.privnet-2.json
+```
+
+Wait the NEO node to sync (progress bar is in the bottom).
+
+#### NEO Node - CLI 2
+
+Open a new terminal window and execute:
+
+```
+$ docker exec -it neo-privatenet-openwallet-docker_neo-privnet_1 np-prompt -c /neo-python/neo/data/protocol.privnet-3.json
+```
+
+Wait the NEO node to sync (progress bar is in the bottom).
+
+### Compile
+
+1. Copy the `contracts/neo-ans.py` file to the docker container, with the following command:
+
+```
+$ docker cp ./contracts/neo-ans.py neo-privatenet-openwallet-docker_neo-privnet_1:/
+```
+
+This will copy the `contracts/neo-ans.py` to the root directory **INSIDE** the docker container (`/neo-ans.py`).
+
+2. Go to the terminal of "CLI 1", and compile the contract with the following command:
+
+```
+neo> sc build /neo-ans.py
+Saved output to /neo-ans.avm
+```
+
+The compiled `.avm` file is then saved on `/neo-ans.avm` **INSIDE** the docker container.
+
+### Deploy
+
+Follow these steps on the **CLI 1 terminal**.
+
+1. First, open a wallet. There's always a wallet with plenty of NEO and GAS for testing purposes.
+
+```
+neo> wallet open /neo-python/neo-privnet.wallet
+```
+
+The password is `coz`.
+
+2. Then, enable the CLI to print received events:
+
+```
+neo> config sc-events on
+```
+
+3. Deploy the previously compiled contract:
+
+```
+neo> sc deploy /neo-ans.avm True False False 070705 05
+```
+
+Once contract details are requested, such as "Contract Name", "Contract Version", etc., just fill as you wish.
+
+Description of used parameters on the `sc deploy` command:
+
+* Path: path to the contract's `.avm`
+  * In this case, the respective `.avm` is located in the root directory of the docker container.
+* Storage: boolean to determine if smart contract requires storage
+  * In this case, yes, the ANS contract is using storage!
+* Dynamic invoke: boolean to determine if smart contract requires dynamic invoke
+  * We are not using dynamic invoke!
+* Payable: boolean to determine if smart contract is payable
+  * The ANS contract address is not receiving payment of assets, so, it's not payable.
+* Params: input parameter types of the smart contract
+  * The parameter types for the ANS contract is `string`, `string`, and `byte array`. The description of types and the respective hexadecimal can be found [here](https://docs.neo.org/en-us/sc/Parameter.html).
+* ReturnType: (Optional) the return type of the smart contract output
+  * The ANS contract is either returning a `boolean` or a `byte array`. Thus, we set the return type as `byte array` -- which we can represent booleans, anyway.
+
+**IMPORTANT:** Take note of the contract address, which is displayed as the output of the `sc deploy` command. You can find it as a hexadecimal string in the "hash" attribute.
+
+### Invoke
+
+Now that the contract is deployed, it's possible to interact with it.
+
+In the **CLI 1 terminal**, register a name for the wallet's address:
+
+```
+neo> sc invoke 0xc4497e3f01d2efb02489be0b63072d5df8b1f8bc register test.neo AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y
+```
+
+Where:
+
+* `0xc4497e3f01d2efb02489be0b63072d5df8b1f8bc`: contract address
+* `register`: the first parameter to the smart contract, which is the registration operation
+* `test.neo`: the second parameter to the smart contract, which `test.neo` is the name we want to register
+* `AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y`: the third parameter to the contract, which is the address we would like to associate with `test.neo`.
+
+Important:
+
+The address for the `register` operation, in this case `AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y`, should be the same address we have in the wallet for CLI 1 terminal. If it's not, this call will fail.
+
+### Testing different Scenarios
+
+#### Does the register really worked?
+
+Just to make sure that the registration really worked and is persisted on-chain, it's possible to use JSON-RPC to perform a `query` operation on the `test.neo` name.
+
+Open a new terminal, and execute the following `cURL` command:
+
+```
+curl -X POST \
+  http://127.0.0.1:30333/ \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '{
+  "jsonrpc": "2.0",
+  "method": "invoke",
+  "params":[
+    "0xc4497e3f01d2efb02489be0b63072d5df8b1f8bc",
+    [{"type": "String", "value": "query"},{"type": "String", "value": "test.neo"}{"type": "ByteArray", "value": ""}]
+  ],
+  "id": 1
+}'
+```
+
+The result should be something like:
+
+```
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+        "script": "0008746573742e6e656f05717565727967bcf8b1f85d2d07630bbe8924b0efd2013f7e49c4",
+        "state": "HALT",
+        "gas_consumed": "0.141",
+        "stack": [
+            {
+                "type": "ByteArray",
+                "value": "23ba2703c53263e8d6e522dc32203339dcd8eee9"
+            }
+        ]
+    }
+}
+```
+
+Where `23ba2703c53263e8d6e522dc32203339dcd8eee9` is the script for the address `AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y`.
+
+Naturally, it's also possible to invoke the `query` in the CLI. For example:
+
+```
+neo> sc invoke 0xc4497e3f01d2efb02489be0b63072d5df8b1f8bc query test.neo ''
+```
+
+#### What if another address/wallet tries to delete `test.neo`?
+
+1. In the **CLI 2 terminal**, create a new wallet:
+
+```
+neo> wallet create /neo-python/new.wallet
+```
+
+Set any password that you can remember for testing purposes.
+
+An address like `AHbrpfNZGuNAeXrFwiea7CXTwqmS3imwz7` will be generated, and you will be able to see in the output of the `wallet create` command.
+
+2. Just that the new address gets some GAS to invoke the `delete` operation successfully, go to the `CLI 1 terminal` and send 100 GAS to it:
+
+```
+neo> wallet send GAS AHbrpfNZGuNAeXrFwiea7CXTwqmS3imwz7 100
+```
+
+where `AHbrpfNZGuNAeXrFwiea7CXTwqmS3imwz7` is the new address created in the **CLI 2 terminal**.
+
+The password, as mentioned above, is `coz`.
+
+3. In the **CLI 2 terminal**, invoke the operation to delete `test.neo`:
+
+```
+neo> sc invoke 0xc4497e3f01d2efb02489be0b63072d5df8b1f8bc delete test.neo ''
+```
+
+The password is the one when you created the wallet.
+
+4. Follow the steps described on [Does the register really worked?](#does-the-register-really-worked?) section to check with JSON-RPC whether the `test.neo` was deleted or not.
