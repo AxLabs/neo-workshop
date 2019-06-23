@@ -216,7 +216,7 @@ $ docker cp ./contracts/neo-ans.py neo-privatenet-openwallet-docker_neo-privnet_
 
 This will copy the `contracts/neo-ans.py` to the root directory **INSIDE** the docker container (`/neo-ans.py`).
 
-2. Go to the terminal of "CLI 1", and compile the contract with the following command:
+2. Go to the **CLI 1 terminal**, and compile the contract with the following command:
 
 ```
 neo> sc build /neo-ans.py
