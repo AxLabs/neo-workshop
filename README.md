@@ -35,8 +35,8 @@ Index:
 ### Set-up a NEO Private Net
 
 ```
-$ git clone git@github.com:AxLabs/neo-privatenet-openwallet-docker.git
-$ cd neo-privatenet-openwallet-docker
+$ git clone https://github.com/AxLabs/neo-local.git
+$ cd neo-local
 $ docker-compose up
 ```
 
@@ -159,17 +159,20 @@ Once you executed the `docker-compose up -d` command, the following output shoul
 
 ```
 $ docker-compose up -d
-Creating network "neo-privatenet-openwallet-docker_default" with the default driver
-Creating neo-privatenet-openwallet-docker_neo-privnet_1 ... done
-Creating neo-privatenet-openwallet-docker_postgresql_1  ... done
-Creating neo-privatenet-openwallet-docker_neo-scan-openwallet_1 ... done
+Creating neo-cli-privatenet-1 ... done
+Creating postgres             ... done
+Creating neo-scan             ... done
+Creating neo-faucet           ... done
+Creating neo-python2          ... done
+Creating neo-python1          ... done
+Creating neo-local_autoheal   ... done
 ```
 
-The name of the docker container running all the nodes is `neo-privatenet-openwallet-docker_neo-privnet_1`.
+The name of the docker container running the consensus nodes is `neo-cli-privatenet-1`.
 
 ### Context
 
-For demonstration and test purposes, we should spawn two NEO CLI (Command Line Interface) in the same docker container. Each NEO node CLI will be pointing to the same NEO privatenet network -- that was previously created in the `docker-compose` command.
+For demonstration and test purposes, we should spawn two NEO CLI (Command Line Interface) in `neo-python1` and `neo-python2` docker containers, respectively. Each NEO node CLI will be pointing to the same NEO privatenet network -- that was previously created in the `docker-compose` command.
 
 It's advisable that you start the NEO Node CLIs in two different terminals.
 
@@ -191,7 +194,7 @@ The `neo-ans.py` is under the. `contracts` directory.
 Open a new terminal window and execute:
 
 ```
-$ docker exec -it neo-privatenet-openwallet-docker_neo-privnet_1 np-prompt -c /neo-python/neo/data/protocol.privnet-2.json
+$ docker exec -it neo-python2 np-prompt -p -v
 ```
 
 Wait the NEO node to sync (progress bar is in the bottom).
@@ -201,17 +204,17 @@ Wait the NEO node to sync (progress bar is in the bottom).
 Open a new terminal window and execute:
 
 ```
-$ docker exec -it neo-privatenet-openwallet-docker_neo-privnet_1 np-prompt -c /neo-python/neo/data/protocol.privnet-3.json
+$ docker exec -it neo-python2 np-prompt -p -v
 ```
 
 Wait the NEO node to sync (progress bar is in the bottom).
 
 ### Compile
 
-1. Copy the `contracts/neo-ans.py` file to the docker container, with the following command:
+1. Copy the `contracts/neo-ans.py` file to the `neo-python1` docker container ("NEO Node - CLI 1"), with the following command:
 
 ```
-$ docker cp ./contracts/neo-ans.py neo-privatenet-openwallet-docker_neo-privnet_1:/
+$ docker cp ./contracts/neo-ans.py neo-python1:/
 ```
 
 This will copy the `contracts/neo-ans.py` to the root directory **INSIDE** the docker container (`/neo-ans.py`).
