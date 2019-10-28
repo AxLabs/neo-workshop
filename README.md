@@ -76,11 +76,23 @@ GAS: `602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7`
 
 ### JSON-RPC Examples
 
+
+For some of the following RPC methods you will need to open a wallet on the RPC node. For this purpose use the following command. When executing it, you will be asked for a password. Enter the password "coz".
+
+```
+docker exec -it neo-python3 np-api-server --config /neo-python/neo/data/protocol.privnet.json --wallet /neo-python/neo-privnet.wallet --port-rpc 30337
+```
+
+This runs an RPC server on the third neo-python node, which is also part of the `neo-local` private net setup. It also opens a predefined wallet that can then be accessed via RPC calls.
+
+The RPC server runs at port 30337. All following examples are configured to call that server.
+
+
 #### Get Account State
 
 ```
 curl -X POST \
-  http://127.0.0.1:30333/ \
+  http://127.0.0.1:30337/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -95,7 +107,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30333/ \
+  http://127.0.0.1:30337/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -110,7 +122,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30333/ \
+  http://127.0.0.1:30337/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -125,7 +137,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30333/ \
+  http://127.0.0.1:30337/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -140,7 +152,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30333/ \
+  http://127.0.0.1:30337/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
