@@ -135,6 +135,8 @@ curl -X POST \
 
 #### Send assets to address
 
+In this case, `c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b` is the NEO asset.
+
 ```
 curl -X POST \
   http://127.0.0.1:30337/ \
@@ -144,6 +146,21 @@ curl -X POST \
   "jsonrpc": "2.0",
   "method": "sendtoaddress",
   "params":["c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b", "ARanVBAy27qR9NPmxJfwEw16fzqXEDV9em", "10.0"],
+  "id": 1
+}'
+```
+
+#### Get Balance (NEO)
+
+```
+curl -X POST \
+  http://127.0.0.1:30333/ \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '{
+  "jsonrpc": "2.0",
+  "method": "getbalance",
+  "params":["c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"],
   "id": 1
 }'
 ```
