@@ -35,8 +35,8 @@ Index:
 ### Set-up a NEO Private Net
 
 ```
-$ git clone https://github.com/AxLabs/neo-local.git
-$ cd neo-local
+$ git clone https://github.com/AxLabs/neo-privatenet-openwallet-docker.git
+$ cd neo-privatenet-openwallet-docker
 $ docker-compose up
 ```
 
@@ -45,7 +45,7 @@ Once you executed the `docker-compose` command, just leave the terminal window o
 If you want to start from scratch (deleting all the data of docker containers), just run the following command in the same directory:
 
 ```
-$ docker-compose down
+$ docker-compose down -v
 ```
 
 Then you can start everything again with the `docker-compose up` command.
@@ -76,23 +76,18 @@ GAS: `602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7`
 
 ### JSON-RPC Examples
 
+For some of the following RPC methods you will need to send JSON-RPC commands to a Neo node with an open wallet.
 
-For some of the following RPC methods you will need to open a wallet on the RPC node. For this purpose use the following command. When executing it, you will be asked for a password. Enter the password "coz".
+The GitHub repository [`AxLabs/neo-privatenet-openwallet-docker`](https://github.com/AxLabs/neo-privatenet-openwallet-docker) is pre-configured to have one consensus node with an open wallet (the one specified as the [Linus](#Linus) wallet).
 
-```
-docker exec -it neo-python3 np-api-server --config /neo-python/neo/data/protocol.privnet.json --wallet /neo-python/neo-privnet.wallet --port-rpc 30337
-```
-
-This runs an RPC server on the third neo-python node, which is also part of the `neo-local` private net setup. It also opens a predefined wallet that can then be accessed via RPC calls.
-
-The RPC server runs at port 30337. All following examples are configured to call that server.
+The JSON-RPC server with an open wallet runs on port 30333. All following examples are configured to call that server.
 
 
 #### Get Account State
 
 ```
 curl -X POST \
-  http://127.0.0.1:30337/ \
+  http://127.0.0.1:30333/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -107,7 +102,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30337/ \
+  http://127.0.0.1:30333/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -122,7 +117,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30337/ \
+  http://127.0.0.1:30333/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -139,7 +134,7 @@ In this case, `c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b`
 
 ```
 curl -X POST \
-  http://127.0.0.1:30337/ \
+  http://127.0.0.1:30333/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -169,7 +164,7 @@ curl -X POST \
 
 ```
 curl -X POST \
-  http://127.0.0.1:30337/ \
+  http://127.0.0.1:30333/ \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
   -d '{
@@ -188,16 +183,16 @@ Once you executed the `docker-compose up -d` command, the following output shoul
 
 ```
 $ docker-compose up -d
-Creating neo-cli-privatenet-1 ... done
-Creating postgres             ... done
-Creating neo-scan             ... done
-Creating neo-faucet           ... done
-Creating neo-python2          ... done
-Creating neo-python1          ... done
-Creating neo-local_autoheal   ... done
+Creating neo-python1   ... done
+Creating neo-postgres  ... done
+Creating neo-consensus ... done
+Creating neo-python2   ... done
+Creating neo-scan      ... done
 ```
 
-The name of the docker container running the consensus nodes is `neo-cli-privatenet-1`.
+The name of the docker container running the consensus nodes is `neo-consensus`.
+
+The docker containers named `neo-python1` and `neo-python2` can provide you a CLI interface to, e.g., deploy smart contracts developed in Python.
 
 ### Context
 
@@ -223,7 +218,7 @@ The `neo-ans.py` is under the. `contracts` directory.
 Open a new terminal window and execute:
 
 ```
-$ docker exec -it neo-python2 np-prompt -p -v
+$ docker exec -it neo-python1 np-prompt -p -v
 ```
 
 Wait the NEO node to sync (progress bar is in the bottom).
